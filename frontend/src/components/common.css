@@ -1,0 +1,91 @@
+/* Card container for both forms */
+.card {
+  background-color: #f4f3fc; /* Light purple background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow effect around the card */
+  max-width: 400px;
+  margin: 40px auto;
+  text-align: left;
+  position: relative;
+}
+
+/* Heading styles - Centered */
+.card h2 {
+  font-weight: bold;
+  color: #4f2cc9; /* Darker purple for heading */
+  margin-bottom: 20px;
+  font-size: 26px; /* Increased font size */
+  text-align: center;
+}
+
+/* Form style */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Label style (align to the left) */
+.input-group label {
+  font-size: 15px; /* Increased font size by 1 point */
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Input field style */
+.input-field {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 95%; /* Slightly smaller to prevent overflow */
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Password visibility toggle button */
+.password-toggle-button {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: #e0e0e0;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #4f2cc9;
+  font-weight: bold;
+}
+
+.password-toggle-button:hover {
+  background-color: #d4c2f5; /* Light purple background on hover */
+}
+
+/* Button style */
+.submit-button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #4f2cc9; /* Purple background */
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submit-button:hover {
+  background-color: #3702a8; /* Darker purple for hover */
+}
+
+/* File input style */
+.file-input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+  }
+}
