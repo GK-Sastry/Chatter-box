@@ -23,9 +23,9 @@ const accessChat = asyncHandler(async (req, res) => {
       { users: { $elemMatch: { $eq: req.user._id } } }, // Check if the logged-in user is in the chat
       { users: { $elemMatch: { $eq: userId } } }, // Check if the requested user is in the chat
     ],
-  })
+  }) // Retrieves the user details from the users array in the Chat model.
     .populate("users", "-password") // Populating the user details, excluding the password
-    .populate("latestMessage"); // Populating the latest message in the chat
+    .populate("latestMessage"); // Populating the latest message in the chat from message model
 
   // Populating the sender details of the latest message
   isChat = await User.populate(isChat, {

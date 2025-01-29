@@ -8,8 +8,9 @@ const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.route("/").get(protect, allUsers);
-router.route("/").post(registerUser);
-router.post("/login", authUser);
+// Routes
+router.route("/").get(protect, allUsers); // Get all users (protected route)
+router.route("/").post(registerUser); // Register user or handle Google registration
+router.post("/login", authUser); // Login user or handle Google login
 
 module.exports = router;

@@ -2,13 +2,14 @@ import React from "react";
 import { createRoot } from "react-dom/client"; // Only import createRoot
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
+import ChatProvider from "./Context/ChatProvider.jsx";
 
 // Use createRoot instead of ReactDOM.createRoot
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <ChatProvider>
       <App />
-    </BrowserRouter>
-  </React.StrictMode>
+    </ChatProvider>
+  </BrowserRouter>
 );

@@ -18,6 +18,7 @@
   font-size: 3rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .homepage-tagline {
@@ -30,6 +31,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem; /* Gap between buttons */
+  margin-bottom: 30px; /* Space before Google sign-in button */
 }
 
 .homepage-button {
@@ -41,8 +43,16 @@
   background-color: #6c63ff;
   color: #fff;
   transition: background-color 0.3s ease;
+  width: 220px; /* Ensure all buttons have the same width */
 }
 
 .homepage-button:hover {
   background-color: #5a53d9;
+}
+
+.google-signin-container {
+  margin-top: 20px; /* Ensure space between other buttons and Google button */
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }

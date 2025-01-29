@@ -15,13 +15,16 @@ const HomePage = () => {
           className="homepage-button"
           title="New To Chatter Box, please SignUp"
           onClick={() => navigate("/signup")}
+          //
         >
           Sign Up
         </button>
         <button
           className="homepage-button"
           title="Already a user, please Login"
-          onClick={() => navigate("/login")}
+          onClick={() => {
+            navigate("/login");
+          }}
         >
           Login
         </button>

@@ -1,66 +1,97 @@
-// Import the required modules
-const mongoose = require("mongoose"); // Library for interacting with MongoDB
-const bcrypt = require("bcryptjs"); // Library for hashing passwords
+const asyncHandler = require("express-async-handler");
+const User = require("../models/userModel");
+const generateToken = require("../config/generateToken");
 
-// Define the schema (structure) for the 'User' collection in the database
-const userSchema = mongoose.Schema(
-  {
-    // Field for the user's name
-    name: {
-      type: "String", // Data type: String
-      required: true, // This field is mandatory
-    },
-    // Field for the user's email
-    email: {
-      type: "String", // Data type: String
-      unique: true, // This value must be unique across all documents (no duplicate emails)
-      required: true, // This field is mandatory
-    },
-    // Field for the user's password
-    password: {
-      type: "String", // Data type: String
-      required: true, // This field is mandatory
-    },
-    // Field for the user's profile picture (optional)
-    pic: {
-      type: "String", // Data type: String (URL of the picture)
-      required: true, // This field is mandatory
-      default:
-        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg", // Default value if no picture is provided
-    },
-    // Field for admin status
-    isAdmin: {
-      type: Boolean, // Data type: Boolean (true/false)
-      required: true, // This field is mandatory
-      default: false, // Default value is `false` (not an admin)
-    },
-  },
-  // Schema options
-  { timestamps: true } // Automatically add `createdAt` and `updatedAt` timestamps
-);
+// @description     Regular Registration (Email/Password)
+// @route           POST /api/user/register
+// @access          Public
+const registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password, pic } = req.body;
 
-// Instance method to compare entered password with the hashed password in the database
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  // Use bcrypt to compare the entered password with the stored hashed password
-  return await bcrypt.compare(enteredPassword, this.password);
-};
-
-// Pre-save middleware: This function runs before saving a user document to the database
-userSchema.pre("save", async function (next) {
-  // Check if the password field has been modified
-  if (!this.isModified) {
-    next(); // If not modified, proceed to the next middleware or save operation
+  if (!name || !email || !password) {
+    res.status(400);
+    throw new Error("Please Enter all the Fields");
   }
 
-  // Generate a salt for hashing the password
-  const salt = await bcrypt.genSalt(10);
+  // Check if user exists
+  const userExists = await User.findOne({ email });
 
-  // Hash the user's password using the generated salt
-  this.password = await bcrypt.hash(this.password, salt);
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+
+  // Create the user
+  const user = await User.create({
+    name,
+    email,
+    password,
+    pic,
+  });
+
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      pic: user.pic,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("User registration failed");
+  }
 });
 
-// Create a Mongoose model named 'User' using the defined schema
-const User = mongoose.model("User", userSchema);
+// @description     Regular Login (Email/Password)
+// @route           POST /api/user/login
+// @access          Public
+const authUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-// Export the 'User' model so it can be used in other parts of the application
-module.exports = User;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Please enter all fields");
+  }
+
+  // Check if the user exists
+  const user = await User.findOne({ email });
+
+  if (user && (await user.matchPassword(password))) {
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      pic: user.pic,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid Email or Password");
+  }
+});
+
+// @description     Get or Search all users
+// @route           GET /api/users?search=
+// @access          Private
+const allUsers = asyncHandler(async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  res.send(users);
+});
+
+module.exports = {
+  registerUser,
+  authUser,
+  allUsers,
+};

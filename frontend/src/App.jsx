@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom"; // Only import Routes and Route
 import HomePage from "./Pages/HomePage.jsx";
-import LoginForm from "./components/LoginForm/LoginForm.jsx";
-import SignUpForm from "./components/SignUpForm/SignUpForm.jsx";
+import LoginForm from "./components/Authentication/LoginForm.jsx";
+import SignUpForm from "./components/Authentication/SignUpForm.jsx";
 
 const App = () => {
   return (
