@@ -1,0 +1,62 @@
+/* SingleChat.css */
+.chat-header {
+  font-size: 28px;
+  font-family: "Work sans", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.back-button {
+  display: flex;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-color: #e8e8e8;
+  padding: 10px;
+  border-radius: 8px;
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 24px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.message-input {
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 500px;
+  background-color: #e0e0e0;
+  border: none;
+  font-size: 16px;
+}
+
+.no-chat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-family: "Work sans", sans-serif;
+  font-size: 24px;
+}

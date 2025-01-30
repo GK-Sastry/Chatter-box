@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { LoadingContext } from "../Context/LoadingContext.jsx"; // Import the Loading context
 import "./HomePage.css";
 
 const HomePage = () => {
+  const { setLoading } = useContext(LoadingContext); // Access setLoading from context
   const navigate = useNavigate();
+
+  // Check if user is logged in (based on localStorage)
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    // Redirect to chats if user is already logged in
+    if (userInfo) {
+      console.log("user info Present");
+      navigate("/chats");
+    }
+  }, [navigate]);
 
   return (
     <div className="homepage-container">
@@ -13,16 +26,20 @@ const HomePage = () => {
       <div className="button-container">
         <button
           className="homepage-button"
-          title="New To Chatter Box, please SignUp"
-          onClick={() => navigate("/signup")}
-          //
+          title="New To Chatter Box? Please SignUp"
+          onClick={() => {
+            setLoading(true); // Set loading before navigating
+            console.log("Navigating to /signup");
+            navigate("/signup", { replace: true });
+          }}
         >
           Sign Up
         </button>
         <button
           className="homepage-button"
-          title="Already a user, please Login"
+          title="Already a user? Please Login"
           onClick={() => {
+            setLoading(true); // Set loading before navigating
             navigate("/login");
           }}
         >

@@ -1,58 +1,61 @@
 import React, { useState } from "react";
-import "../common.css"; // Import the CSS file
+import { useNavigate } from "react-router-dom";
+import { useLoading } from "../../Context/LoadingContext.jsx";
 import axios from "axios";
-import CloudinaryUpload from "./CloudinaryUpload.jsx"; // Import the Cloudinary upload component
+import "../CSS/common_auth.css";
 
 const SignUpForm = () => {
+  const { setLoading } = useLoading(); // Access global loading context
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profilePic, setProfilePic] = useState(null);
+  const [picLoading, setPicLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setPicLoading(true); // Set loading for picture
+    setLoading(true); // Set global loading state to true
+
     if (!name || !email || !password || !confirmPassword) {
-      alert("Please Fill all the Fields");
+      alert("Please fill all fields");
+      setPicLoading(false);
+      setLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords Do Not Match!");
+      alert("Passwords do not match!");
+      setPicLoading(false);
+      setLoading(false);
       return;
     }
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-
       const { data } = await axios.post(
-        "/api/user/register", // Endpoint for regular sign-up (if not using Google)
-        {
-          name,
-          email,
-          password,
-          profilePic, // Send the profile picture URL to the backend
-        },
-        config
+        "/api/user",
+        { name, email, password, profilePic },
+        { headers: { "Content-type": "application/json" } }
       );
 
-      console.log(data);
       alert("Registration Successful!");
       localStorage.setItem("userInfo", JSON.stringify(data));
+      setPicLoading(false); // Reset loading state
+      setLoading(false); // Reset global loading state
+      navigate("/chats"); // Redirect to chats after sign-up
     } catch (error) {
-      console.error("Error Occurred:", error);
-      alert("Error Occurred! Please try again.");
+      alert("Error occurred! Please try again.");
+      setPicLoading(false);
+      setLoading(false); // Reset global loading state on error
     }
   };
 
   return (
     <div className="card">
-      <h2 className="form-title">Sign Up</h2>
-      <form onSubmit={handleSubmit} className="form">
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Name:</label>
           <input
@@ -60,7 +63,6 @@ const SignUpForm = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="input-field"
-            placeholder="Enter Your Name"
             required
           />
         </div>
@@ -71,7 +73,6 @@ const SignUpForm = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="input-field"
-            placeholder="Enter Your Email"
             required
           />
         </div>
@@ -82,7 +83,6 @@ const SignUpForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="input-field"
-            placeholder="Enter Password"
             required
           />
         </div>
@@ -93,15 +93,11 @@ const SignUpForm = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="input-field"
-            placeholder="Confirm Password"
             required
           />
         </div>
-
-        <CloudinaryUpload setProfilePic={setProfilePic} />
-
         <button type="submit" className="submit-button">
-          Sign Up
+          {picLoading ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
     </div>

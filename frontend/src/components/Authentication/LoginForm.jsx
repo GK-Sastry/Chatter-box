@@ -1,29 +1,31 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import axios for API calls
-import { useNavigate } from "react-router-dom"; // For page redirection
-import "../common.css"; // Import the CSS file
+import { useNavigate } from "react-router-dom";
+import { useLoading } from "../../Context/LoadingContext.jsx"; // Use the global loading context
+import axios from "axios";
+import "../CSS/common_auth.css";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState(""); // State for email
-  const [password, setPassword] = useState(""); // State for password
-  const [passwordVisible, setPasswordVisible] = useState(false); // Password visibility toggle
-  const [loading, setLoading] = useState(false); // Loading state to show when API is being called
-  const navigate = useNavigate(); // useNavigate hook for redirection
+  const { setLoading } = useLoading(); // Access global loading context
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loadingState, setLoadingState] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoadingState(true); // Set loading state to true for form submission
+    setLoading(true); // Set global loading state to true
 
     if (!email || !password) {
       alert("Please fill in all fields.");
+      setLoadingState(false);
       setLoading(false);
       return;
     }
 
     try {
-      // Send login request to backend (replace with your actual API endpoint)
       const { data } = await axios.post(
-        "/api/user/login", // Backend URL to handle login
+        "/api/user/login",
         { email, password },
         {
           headers: {
@@ -32,16 +34,18 @@ const LoginForm = () => {
         }
       );
 
-      alert(`Login Successful! Welcome ${data.name}`); // Success message with name
-      localStorage.setItem("userInfo", JSON.stringify(data)); // Store user data in localStorage
-      setLoading(false);
-      navigate("/chats"); // Redirect to the dashboard or another page
+      alert(`Login Successful! Welcome ${data.name}`);
+      localStorage.setItem("userInfo", JSON.stringify(data)); // Save user info to localStorage
+      setLoadingState(false);
+      setLoading(false); // Set loading to false after login
+      navigate("/chats"); // Navigate to chats page after successful login
     } catch (error) {
       alert(
         "Login Failed: " +
           (error.response?.data?.message || "An error occurred.")
       );
-      setLoading(false);
+      setLoadingState(false);
+      setLoading(false); // Set loading to false if error occurs
     }
   };
 
@@ -61,25 +65,16 @@ const LoginForm = () => {
         </div>
         <div className="input-group">
           <label>Password:</label>
-          <div style={{ position: "relative" }}>
-            <input
-              type={passwordVisible ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-field"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setPasswordVisible(!passwordVisible)}
-              className="password-toggle-button"
-            >
-              {passwordVisible ? "Hide" : "Show"}
-            </button>
-          </div>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input-field"
+            required
+          />
         </div>
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+        <button type="submit" className="submit-button" disabled={loadingState}>
+          {loadingState ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

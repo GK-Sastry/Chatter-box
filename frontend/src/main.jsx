@@ -7,9 +7,9 @@ import ChatProvider from "./Context/ChatProvider.jsx";
 // Use createRoot instead of ReactDOM.createRoot
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <ChatProvider>
+  <React.StrictMode>
+    <BrowserRouter>
       <App />
-    </ChatProvider>
-  </BrowserRouter>
+    </BrowserRouter>
+  </React.StrictMode>
 );

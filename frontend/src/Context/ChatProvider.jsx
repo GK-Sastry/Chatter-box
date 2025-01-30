@@ -1,23 +1,30 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-
-const ChatContext = createContext();
+// ChatProvider.js
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import ChatContext from "./Chat_Context.js"; // Import the created context
+import { useLoading } from "./LoadingContext.jsx"; // Import the loading context
 
 const ChatProvider = ({ children }) => {
+  const { loading } = useLoading(); // Get loading state from global context
   const [selectedChat, setSelectedChat] = useState();
   const [user, setUser] = useState();
   const [notification, setNotification] = useState([]);
   const [chats, setChats] = useState();
 
-  const navigate = useNavigate(); // Using useNavigate instead of useHistory
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // Skip redirect logic if loading is true
+    if (loading) return;
+
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     setUser(userInfo);
 
-    if (!userInfo) navigate("/"); // Redirect to "/" if user is not found
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+    if (!userInfo) {
+      console.log("log from ChatProvider when No userInfo");
+      navigate("/"); // Redirect to home if userInfo is not found
+    }
+  }, [navigate, loading]); // Depend on loading state
 
   return (
     <ChatContext.Provider
@@ -37,8 +44,9 @@ const ChatProvider = ({ children }) => {
   );
 };
 
+// Custom hook to access the context
 export const ChatState = () => {
-  return useContext(ChatContext);
+  return React.useContext(ChatContext);
 };
 
 export default ChatProvider;
